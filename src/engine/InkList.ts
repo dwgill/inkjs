@@ -117,7 +117,7 @@ export class InkList extends Map<SerializedInkListItem, number> {
     // in the original code, but only if otherList is an InkList. IIFE FTW.
     super(
       (() => {
-        if (arguments[0] instanceof InkList) {
+        if (InkList.isInkList(arguments[0])) {
           return arguments[0];
         } else {
           return [];
@@ -125,7 +125,7 @@ export class InkList extends Map<SerializedInkListItem, number> {
       })()
     );
 
-    if (arguments[0] instanceof InkList) {
+    if (InkList.isInkList(arguments[0])) {
       let otherList = arguments[0] as InkList;
 
       this._originNames = otherList.originNames;
@@ -165,6 +165,15 @@ export class InkList extends Map<SerializedInkListItem, number> {
       let singleElement = arguments[0] as KeyValuePair<InkListItem, number>;
       this.Add(singleElement.Key, singleElement.Value);
     }
+  }
+
+  public static isInkList(inkList: any): inkList is InkList {
+    return (
+      !!inkList &&
+      inkList instanceof Map &&
+      "origins" in inkList &&
+      "_originNames" in inkList
+    );
   }
 
   public static FromString(myListItem: string, originStory: Story) {
